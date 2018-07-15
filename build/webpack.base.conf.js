@@ -4,7 +4,10 @@ const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 
-function resolve (dir) {
+const autoprefixer = require('autoprefixer')
+const localIdentName = '[name]__[local]___[hash:base64:5]'
+
+function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
 
@@ -27,9 +30,8 @@ module.exports = {
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
-    publicPath: process.env.NODE_ENV === 'production'
-      ? config.build.assetsPublicPath
-      : config.dev.assetsPublicPath
+    publicPath: process.env.NODE_ENV === 'production' ?
+      config.build.assetsPublicPath : config.dev.assetsPublicPath
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
@@ -78,6 +80,49 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
+      },
+      {
+        test: /\.(css|less)$/,
+        use: [{
+            loader: "style-loader"
+          }, {
+            loader: "css-loader",
+            options: {
+              importLoaders: 2,
+              modules: true,
+              localIdentName,
+              minimize: false,
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: true,
+              plugins: [
+                // px2rem({ remUnit: 75 }),
+                autoprefixer({
+                  browsers: [
+                    'last 3 versions',
+                    'ie >= 9',
+                    'ff >= 30',
+                    'chrome >= 34',
+                    'safari >= 6',
+                    'opera >= 12.1'
+                  ]
+                })
+              ]
+            }
+          },
+          {
+            loader: "less-loader",
+            options: {
+              paths: [
+                path.resolve(__dirname, "node_modules")
+              ]
+            }
+          }
+        ]
       }
     ]
   },
