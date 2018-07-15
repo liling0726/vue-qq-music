@@ -13,6 +13,7 @@
 <style lang="less">
 @import "~common/less/variable.less";
 @import "~common/less/mixin.less";
+
 .m-header {
   position: relative;
   height: 44px;
@@ -26,7 +27,7 @@
     width: 30px;
     height: 32px;
     margin-right: 9px;
-    .bg-image("./logo");
+    background-image: url("./logo@2x.png");
     background-size: 30px 32px;
   }
   .text {
