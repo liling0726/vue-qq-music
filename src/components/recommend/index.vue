@@ -5,7 +5,7 @@
         <div v-if="recommends.length" class="slider-wrapper">
           <div class="slider-content">
             <slider ref="slider">
-              git<div v-for="(item,index) in recommends" :key="index">
+              <div v-for="(item,index) in recommends" :key="index">
                 <a :href="item.linkUrl">
                   <img @load="loadImage" :src="item.picUrl">
                 </a>
@@ -59,7 +59,8 @@ export default {
   methods: {
     _getRecommend() {
       getRecommend().then((res) => {
-        console.log(res)
+        console.log('推荐滑动', res)
+        this.recommends = res.data.slider
       })
     },
     _getDiscList() {
