@@ -3,15 +3,18 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import VueLazyLoad from 'vue-lazyload'
 import fastclick from 'fastclick'
 import 'common/less/index.less'
-
+import store from '@/store'
+Vue.use(VueLazyLoad)
 fastclick.attach(document.body)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   components: { App },
   template: '<App/>'

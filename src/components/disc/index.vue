@@ -1,7 +1,5 @@
 <template>
-  <div>
-    歌手页
-  </div>
+  <div>disc</div>
 </template>
 <script>
 export default {
@@ -9,4 +7,5 @@ export default {
 }
 </script>
 <style lang="less">
+
 </style>

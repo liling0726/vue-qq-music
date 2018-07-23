@@ -1,6 +1,6 @@
 <template>
   <div class="recommend" ref="recommend">
-    <scroll ref="scroll" class="recommend-content" :data="discList">
+    <scroll ref="scroll" class="recommend-content" :data="discList" >
       <div>
         <div v-if="recommends.length" class="slider-wrapper">
           <div class="slider-content">
@@ -40,6 +40,8 @@ import Loading from 'base/loading'
 import Scroll from 'base/scroll'
 import Slider from 'base/slider'
 import { getRecommend, getDiscList } from 'api/recommend'
+import { ERR_OK } from 'api/config'
+import { mapMutations } from 'vuex'
 export default {
   data() {
     return {
@@ -60,14 +62,38 @@ export default {
     _getRecommend() {
       getRecommend().then((res) => {
         console.log('推荐滑动', res)
-        this.recommends = res.data.slider
+        if (res.code === ERR_OK) {
+          this.recommends = res.data.slider
+        }
       })
     },
     _getDiscList() {
       getDiscList().then((res) => {
         console.log(res)
+        if (res.code === ERR_OK) {
+          this.discList = res.data.list
+        }
       })
-    }
+    },
+    // 图片加载完成，重新计算滚动高度
+    loadImage() {
+      if (this.checkLoaded) {
+        this.checkLoaded = true
+        setTimeout(() => {
+          this.refs.scroll.refresh()
+        }, 20)
+      }
+    },
+    // 点击推荐页面
+    selectItem(item) {
+      this.$router.push({
+        path: `/recommend/${item.dissid}`
+      })
+      this.setDisc(item)
+    },
+    ...mapMutations({
+      setDisc: 'SET_DISC'
+    })
   }
 }
 </script>

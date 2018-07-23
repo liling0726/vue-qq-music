@@ -17,4 +17,5 @@ export default {
 }
 </script>
 <style lang="less">
+* { touch-action: none; }
 </style>
