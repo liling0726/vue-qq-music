@@ -1,4 +1,4 @@
 const state = {
-  disc: []
+  disc: {}
 }
 export default state

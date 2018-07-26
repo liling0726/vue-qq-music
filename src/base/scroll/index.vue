@@ -38,6 +38,11 @@ export default {
     probeType: {
       type: Number,
       default: 0
+    },
+    // 是否监听滚动
+    listenScroll: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -61,6 +66,26 @@ export default {
         click: this.click,
         probeType: this.probeType
       })
+      console.log('scroll', this.listenScroll, this.probeType)
+      if (this.listenScroll) {
+        this.scroll.on('scroll', (pos) => {
+          this.$emit('scroll', pos)
+        })
+      }
+
+      if (this.pullup) {
+        this.scroll.on('scrollEnd', () => {
+          if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
+            this.$emit('scrollToEnd')
+          }
+        })
+      }
+
+      if (this.beforeScroll) {
+        this.scroll.on('beforeScrollStart', () => {
+          this.$emit('beforeScroll')
+        })
+      }
     },
     refresh() {
       // 代理better-scroll的refresh方法

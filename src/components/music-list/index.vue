@@ -29,15 +29,106 @@
 import Scroll from 'base/scroll'
 import Loading from 'base/loading'
 import SongList from 'base/song-list'
-// import { prefixStyle } from 'common/js/dom'
+import { prefixStyle } from 'common/js/dom'
 // import {playlistMixin} from 'common/js/mixin'
 // import { mapActions } from 'vuex'
 
+const RESERVED_HEIGHT = 40
+const transform = prefixStyle('transform')
+const backdrop = prefixStyle('backdrop-filter')
 export default {
   components: {
     Loading,
     SongList,
     Scroll
+  },
+  props: {
+    songs: {
+      type: Array,
+      default: () => []
+    },
+    title: {
+      type: String,
+      default: ''
+    },
+    bgImage: {
+      type: String,
+      default: ''
+    },
+    rank: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      scrollY: 0
+    }
+  },
+  computed: {
+    bgStyle() {
+      return `background-image:url(${this.bgImage})`
+    }
+  },
+  watch: {
+    scrollY(newVal) {
+      console.log('scrollY', newVal)
+      let translateY = Math.max(this.minTransalteY, newVal)
+      let scale = 1
+      let zIndex = 0
+      let blur = 0
+      const percent = Math.abs(newVal / this.imageHeight)
+      // 下拉滚动
+      if (newVal > 0) {
+        scale = 1 + percent
+        zIndex = 10
+      } else { // 上拉滚动
+        blur = Math.min(20, percent * 20)
+      }
+
+      this.$refs.layer.style[transform] = `translate3d(0,${translateY}px,0)`
+      this.$refs.filter.style[backdrop] = `blur(${blur}px)`
+      if (newVal < this.minTransalteY) {
+        zIndex = 10
+        this.$refs.bgImage.style.paddingTop = 0
+        this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
+        this.$refs.playBtn.style.display = 'none'
+      } else {
+        this.$refs.bgImage.style.paddingTop = '70%'
+        this.$refs.bgImage.style.height = 0
+        this.$refs.playBtn.style.display = ''
+      }
+      this.$refs.bgImage.style[transform] = `scale(${scale})`
+      this.$refs.bgImage.style.zIndex = zIndex
+    }
+  },
+  created() {
+    this.probeType = 3
+    this.listenScroll = true
+  },
+  mounted() {
+    this.imageHeight = this.$refs.bgImage.clientHeight
+    this.minTransalteY = -this.imageHeight + RESERVED_HEIGHT
+    this.$refs.list.$el.style.top = `${this.imageHeight}px`
+  },
+  methods: {
+    // 范回上一级
+    back() {
+      this.$router.back()
+    },
+    // 随机播放
+    random() {
+
+    },
+    // 点击列表
+    selectItem() {
+
+    },
+    // 滚动
+    scroll(pos) {
+      console.log(pos.y)
+      this.scrollY = pos.y
+    }
   }
 }
 </script>

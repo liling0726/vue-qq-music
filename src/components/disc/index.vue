@@ -5,16 +5,54 @@
 </template>
 <script>
 import musicList from 'components/music-list'
-
+import { getSongList } from 'api/recommend'
+import { ERR_OK } from 'api/config'
+import { mapGetters } from 'vuex'
+import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
 export default {
   components: {
     musicList
   },
   data() {
     return {
-      title: '',
-      songs: [],
-      bgImage: ''
+      songs: []
+    }
+  },
+  computed: {
+    title() {
+      return this.disc.dissname
+    },
+    bgImage() {
+      return this.disc.imgurl
+    },
+    ...mapGetters([
+      'disc'
+    ])
+  },
+  created() {
+    this._getSongList()
+  },
+  methods: {
+    _getSongList() {
+      if (!this.disc.dissid) {
+        this.$router.back()
+      }
+      getSongList(this.disc.dissid).then(res => {
+        if (ERR_OK === res.code) {
+          processSongsUrl(this._normalizeSongs(res.cdlist[0].songlist)).then((songs) => {
+            this.songs = songs
+          })
+        }
+      })
+    },
+    _normalizeSongs(list) {
+      let ret = []
+      list.forEach((musicData) => {
+        if (isValidMusic(musicData)) {
+          ret.push(createSong(musicData))
+        }
+      })
+      return ret
     }
   }
 }
